@@ -7,6 +7,7 @@ export default async function firstRoute(fastify, options) {
 
   fastify.get("/animals", async (request, reply) => {
     const result = await collection.find().toArray();
+    reply.utility();
     if (result.length === 0) {
       throw new Error("No documents found");
     }

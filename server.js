@@ -1,11 +1,12 @@
-// ESM
 import Fastify from "fastify";
 import dbConnector from "./our-db-connector.js";
 import firstRoute from "./our-first-route.js";
+import myplugin from "./myplugin.js";
 
 const fastify = Fastify({
   logger: true,
 });
+fastify.register(myplugin);
 fastify.register(dbConnector);
 fastify.register(firstRoute);
 

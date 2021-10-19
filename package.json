@@ -2,9 +2,10 @@
   "name": "home-cooking-fastify",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server",
+    "dev": "nodemon server"
   },
   "type": "module",
   "author": "",
@@ -12,6 +13,10 @@
   "dependencies": {
     "fastify": "^3.22.0",
     "fastify-mongodb": "^4.1.1",
+    "fastify-mysql": "^2.1.0",
     "fastify-plugin": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
   }
 }

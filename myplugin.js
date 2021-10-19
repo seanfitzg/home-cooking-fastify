@@ -1,4 +1,3 @@
-import Fastify from "fastify";
 import fp from "fastify-plugin";
 
 async function myPlugin(app) {

@@ -13,7 +13,7 @@ CREATE TABLE Recipes (
     Method text NULL,
     Description text NULL,
     PRIMARY KEY (Id),
-    CONSTRAINT `FK_Recipes_Users_UserId1` FOREIGN KEY (UserId) REFERENCES Users (Id) ON DELETE RESTRICT
+    CONSTRAINT `FK_Recipes_Users_UserId` FOREIGN KEY (UserId) REFERENCES Users (Id) ON DELETE RESTRICT
 );
 
 CREATE TABLE Ingredients (

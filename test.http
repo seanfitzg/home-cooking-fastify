@@ -1,10 +1,10 @@
-GET http://localhost:3000/recipes
+GET http://localhost:3000/users
 
 
 ###
 
-POST http://localhost:3000/recipes/add HTTP/1.1
+POST http://localhost:3000/users/add HTTP/1.1
 Content-Type: text/plain
 Content-Length: 27
 
-{ "recipeName": "sean" }
+{ "userName": "Sam" }

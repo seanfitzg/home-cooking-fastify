@@ -1,4 +1,4 @@
-version: "3.4"
+version: '3.4'
 
 services:
   mysql:
@@ -14,4 +14,18 @@ services:
       - ./mysql_create:/docker-entrypoint-initdb.d/
     restart: always
     ports:
-      - "3306:3306"
+      - '3306:3306'
+
+  home-cooking-fastify:
+    depends_on:
+      - mysql
+    image: ${DOCKER_REGISTRY-}home-cooking-fastify:dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    environment:
+      IS_DOCKER: 1
+
+  # docker run --name home-cooking-fastify -it -p 5000:5000 home-cooking-fastify:dev /bin/bash

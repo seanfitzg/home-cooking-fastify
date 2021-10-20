@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "fastify": "^3.22.0",
+    "fastify-auth0-verify": "^0.6.0",
+    "fastify-cors": "^6.0.2",
     "fastify-mongodb": "^4.1.1",
     "fastify-mysql": "^2.1.0",
     "fastify-plugin": "^3.0.0"

@@ -1,10 +1,5 @@
 USE homecooking;
 
-CREATE TABLE Users (
-    Id int NOT NULL AUTO_INCREMENT,
-    Name text NULL,
-    PRIMARY KEY (Id)
-);
 
 CREATE TABLE Recipes (
     Id int NOT NULL AUTO_INCREMENT,
@@ -12,8 +7,7 @@ CREATE TABLE Recipes (
     Name text NULL,
     Method text NULL,
     Description text NULL,
-    PRIMARY KEY (Id),
-    CONSTRAINT `FK_Recipes_Users_UserId` FOREIGN KEY (UserId) REFERENCES Users (Id) ON DELETE RESTRICT
+    PRIMARY KEY (Id)
 );
 
 CREATE TABLE Ingredients (

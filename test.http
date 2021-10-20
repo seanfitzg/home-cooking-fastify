@@ -1,10 +1,28 @@
-GET http://localhost:3000/users
-
+GET http://localhost:5000/users
 
 ###
 
-POST http://localhost:3000/users/add HTTP/1.1
+POST http://localhost:5000/users/add HTTP/1.1
 Content-Type: text/plain
 Content-Length: 27
 
-{ "userName": "Sam" }
+{ 
+    "userName": "Sean"
+}
+
+###
+
+GET http://localhost:5000/recipes
+
+###
+
+POST http://localhost:5000/recipes/add HTTP/1.1
+Content-Type: text/plain
+Content-Length: 27
+
+{ 
+    "userId": 1, 
+    "name": "Pasta and Sausage",  
+    "description": "Nice food",
+    "method": "Make the pasta"
+}

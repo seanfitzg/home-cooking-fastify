@@ -3,7 +3,7 @@ USE homecooking;
 
 CREATE TABLE Recipes (
     Id int NOT NULL AUTO_INCREMENT,
-    UserId int NOT NULL,
+    UserId text NOT NULL,
     Name text NULL,
     Method text NULL,
     Description text NULL,

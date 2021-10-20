@@ -18,13 +18,11 @@ export default async function recipes(fastify, options, done) {
     preValidation: fastify.authenticate,
   });
 
-  fastify.post('/recipes/add', {
+  fastify.post('/recipes', {
     handler: (req, reply) => {
-      console.log(req.body);
-      var recipe = JSON.parse(req.body);
       fastify.mysql.execute(
         `INSERT INTO Recipes (UserId, Name, Method, Description) 
-      VALUES ("${recipe.userId}", "${recipe.name}", "${recipe.method}", "${recipe.description}")`,
+      VALUES ("${req.user.sub}", "${req.body.name}", "${req.body.method}", "${req.body.description}")`,
         (err, result) => {
           console.log(err);
           console.log(result);

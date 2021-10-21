@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import mySql from 'fastify-mysql';
 import fastifyAuth from 'fastify-auth0-verify';
 import fastifyCors from 'fastify-cors';
-import recipes from './routes/recipes.js';
+import recipes from './routes/recipes/recipes.js';
 
 const fastify = Fastify({
   logger: true,

@@ -51,7 +51,6 @@ export default async function recipes(fastify, options, done) {
   };
 
   const updateARecipe = (req, reply) => {
-    console.log(`req`, req.body);
     fastify.mysql.execute(
       `UPDATE Recipes
         SET Name = "${req.body.name}",

@@ -6,8 +6,8 @@ const server = app({
 
 server.listen(5000, '0.0.0.0', function (err, address) {
   if (err) {
-    app.log.error(process.versions);
-    app.log.error(err);
+    server.log.error(process.versions);
+    server.log.error(err);
     process.exit(1);
   }
 });

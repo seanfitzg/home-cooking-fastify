@@ -18,6 +18,7 @@ export default async function recipes(fastify, options, done) {
   const getARecipe = (req, reply) => {
     fastify.mysql.query(
       `SELECT * FROM Recipes WHERE Id = ${req.params.id}`,
+      // what if there is no recipe for that id?
       (err, result) => {
         let recipes = result.map((value) => ({
           id: value.Id,

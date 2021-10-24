@@ -1,34 +1,46 @@
 export default async function recipes(fastify, options, done) {
-  const getRecipes = (req, reply) => {
-    fastify.pg.query('SELECT * FROM Recipes', function onResult(err, result) {
-      if (result) {
-        let recipes = result.rows.map((value) => ({
+  const getRecipes = async (req, reply) => {
+    const { rows } = await fastify.pg.query('SELECT * FROM Recipes');
+    if (rows) {
+      let recipes = rows.map((value) => {
+        return {
           id: value.id,
           userId: value.userid,
           name: value.name,
           method: value.method,
           description: value.Description,
-        }));
-        reply.send(err || recipes);
-      }
-    });
+          //ingredients,
+        };
+      });
+      reply.send(recipes);
+    }
   };
 
-  const getARecipe = (req, reply) => {
-    fastify.pg.query(
-      `SELECT * FROM Recipes WHERE Id = ${req.params.id}`,
-      // what if there is no recipe for that id?
-      (err, result) => {
-        let recipes = result.rows.map((value) => ({
-          id: value.id,
-          userId: value.userid,
-          name: value.name,
-          method: value.method,
-          description: value.description,
-        }));
-        reply.send(err || recipes[0]);
-      }
+  const getARecipe = async (req, reply) => {
+    const { rows } = await fastify.pg.query(
+      `SELECT * FROM Recipes WHERE Id = ${req.params.id}`
     );
+    // what if there is no recipe for that id?
+    let recipes = rows.map(async (value) => {
+      const { rows } = await fastify.pg.query(
+        'SELECT * FROM Ingredients WHERE RecipeId = $1',
+        [value.id]
+      );
+      const ingredients = rows.map((ing) => ({
+        id: ing.id,
+        amount: ing.amount,
+        item: ing.item,
+      }));
+      const recipe = {
+        id: value.id,
+        userId: value.userid,
+        name: value.name,
+        method: value.method,
+        description: value.description,
+        ingredients,
+      };
+      reply.send(recipe);
+    });
   };
 
   const deleteARecipe = (req, reply) => {
@@ -41,9 +53,25 @@ export default async function recipes(fastify, options, done) {
   };
 
   const saveRecipe = (req, reply) => {
-    fastify.pg.query(
-      `INSERT INTO Recipes (UserId, Name, Method, Description) 
-      VALUES ('${req.user.sub}', '${req.body.name}', '${req.body.method}', '${req.body.description}')`,
+    fastify.pg.transact(
+      async (client) => {
+        const recipeId = await client.query(`
+          INSERT INTO Recipes (UserId, Name, Method, Description) 
+          VALUES ('${req.user.sub}', '${req.body.name}', '${req.body.method}', '${req.body.description}') returning Id;`);
+
+        req.body.ingredients.forEach(async (ingredient) => {
+          await client.query(
+            `INSERT INTO Ingredients (Id, Item, Amount, RecipeId)
+            VALUES ('${ingredient.id}', '${ingredient.item}', '${ingredient.amount}', '${recipeId.rows[0].id}')`,
+            (err, result) => {
+              if (err) {
+                console.log(err);
+                reply.code(200).send(err);
+              }
+            }
+          );
+        });
+      },
       (err, result) => {
         reply.code(200).send(err || 'Success');
       }
@@ -51,11 +79,11 @@ export default async function recipes(fastify, options, done) {
   };
 
   const updateARecipe = (req, reply) => {
-    fastify.mysql.query(
+    fastify.pg.query(
       `UPDATE Recipes
-        SET Name = "${req.body.name}",
-        Method = "${req.body.method}", 
-        Description = "${req.body.description}"
+        SET Name = '${req.body.name}',
+        Method = '${req.body.method}', 
+        Description = '${req.body.description}'
         WHERE Id = ${req.body.id}`,
       (err, result) => {
         reply.code(200).send(err || 'Success');

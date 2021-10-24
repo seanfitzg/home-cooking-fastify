@@ -9,10 +9,8 @@ CREATE TABLE Recipes (
 );
 
 CREATE TABLE Ingredients (
-    Id bit(16) PRIMARY KEY NOT NULL,
+    Id UUID PRIMARY KEY NOT NULL,
     Item varchar NULL,
     Amount DOUBLE PRECISION NOT NULL,
     RecipeId int NOT NULL references Recipes(Id)
 );
-
--- host all all 0.0.0.0/0 trust

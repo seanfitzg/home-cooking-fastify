@@ -9,7 +9,6 @@ export default async function recipes(fastify, options, done) {
           name: value.name,
           method: value.method,
           description: value.Description,
-          //ingredients,
         };
       });
       reply.send(recipes);

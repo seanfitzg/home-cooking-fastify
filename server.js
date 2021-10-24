@@ -24,9 +24,8 @@ fastify.register(recipes);
 
 fastify.listen(5000, '0.0.0.0', function (err, address) {
   if (err) {
-    fastify.log.error(process.versions);
-    fastify.log.error(err);
+    server.log.error(process.versions);
+    server.log.error(err);
     process.exit(1);
   }
-  // Server is now listening on ${address}
 });

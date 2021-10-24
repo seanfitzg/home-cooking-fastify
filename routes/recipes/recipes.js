@@ -17,29 +17,31 @@ export default async function recipes(fastify, options, done) {
 
   const getARecipe = async (req, reply) => {
     const { rows } = await fastify.pg.query(
-      `SELECT * FROM Recipes WHERE Id = ${req.params.id}`
+      'SELECT * FROM Recipes WHERE Id = $1',
+      [req.params.id]
     );
     // what if there is no recipe for that id?
-    let recipes = rows.map(async (value) => {
-      const { rows } = await fastify.pg.query(
+    if (rows.length > 0) {
+      const dbRecipe = rows[0];
+      const dbIngredient = await fastify.pg.query(
         'SELECT * FROM Ingredients WHERE RecipeId = $1',
-        [value.id]
+        [dbRecipe.id]
       );
-      const ingredients = rows.map((ing) => ({
+      const ingredients = dbIngredient.rows.map((ing) => ({
         id: ing.id,
         amount: ing.amount,
         item: ing.item,
       }));
       const recipe = {
-        id: value.id,
-        userId: value.userid,
-        name: value.name,
-        method: value.method,
-        description: value.description,
+        id: dbRecipe.id,
+        userId: dbRecipe.userid,
+        name: dbRecipe.name,
+        method: dbRecipe.method,
+        description: dbRecipe.description,
         ingredients,
       };
       reply.send(recipe);
-    });
+    }
   };
 
   const deleteARecipe = (req, reply) => {

@@ -1,24 +1,40 @@
 version: '3.4'
 
 services:
-  mysql:
-    platform: linux/x86_64 # require for m1.
-    image: mysql:latest
+  # mysql:
+  #   platform: linux/x86_64 # require for m1.
+  #   image: mysql:latest
+  #   environment:
+  #     MYSQL_RANDOM_ROOT_PASSWORD: 1
+  #     MYSQL_DATABASE: homecooking
+  #     MYSQL_USER: dbuser
+  #     MYSQL_PASSWORD: Password1!
+  #   volumes:
+  #     - ./mysql-data:/var/lib/mysql/
+  #     - ./mysql_create:/docker-entrypoint-initdb.d/
+  #   restart: always
+  #   ports:
+  #     - '3306:3306'
+
+  pgsql:
+    # platform: linux/x86_64 # require for m1.
+    image: postgres:latest
+    # command: postgres -c config_file=/etc/postgresql.conf
     environment:
-      MYSQL_RANDOM_ROOT_PASSWORD: 1
-      MYSQL_DATABASE: homecooking
-      MYSQL_USER: dbuser
-      MYSQL_PASSWORD: Password1!
+      POSTGRES_DB: homecooking
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: Password1!
     volumes:
-      - ./mysql-data:/var/lib/mysql/
-      - ./mysql_create:/docker-entrypoint-initdb.d/
+      - ./sql_data:/var/lib/postgresql/data
+      - ./sql_create:/docker-entrypoint-initdb.d/
+      # - ./sql_create:/etc
     restart: always
     ports:
-      - '3306:3306'
+      - '5432:5432'
 
   home-cooking-fastify:
     depends_on:
-      - mysql
+      - pgsql
     image: ${DOCKER_REGISTRY-}home-cooking-fastify:dev
     build:
       context: .

@@ -1,30 +1,29 @@
 export default async function recipes(fastify, options, done) {
   const getRecipes = (req, reply) => {
-    fastify.mysql.query(
-      'SELECT * FROM Recipes',
-      function onResult(err, result) {
-        let recipes = result.map((value) => ({
-          id: value.Id,
-          userId: value.UserId,
-          name: value.Name,
-          method: value.Method,
+    fastify.pg.query('SELECT * FROM Recipes', function onResult(err, result) {
+      if (result) {
+        let recipes = result.rows.map((value) => ({
+          id: value.id,
+          userId: value.userid,
+          name: value.name,
+          method: value.method,
           description: value.Description,
         }));
         reply.send(err || recipes);
       }
-    );
+    });
   };
 
   const getARecipe = (req, reply) => {
-    fastify.mysql.query(
+    fastify.pg.query(
       `SELECT * FROM Recipes WHERE Id = ${req.params.id}`,
       (err, result) => {
-        let recipes = result.map((value) => ({
-          id: value.Id,
-          userId: value.UserId,
-          name: value.Name,
-          method: value.Method,
-          description: value.Description,
+        let recipes = result.rows.map((value) => ({
+          id: value.id,
+          userId: value.userid,
+          name: value.name,
+          method: value.method,
+          description: value.description,
         }));
         reply.send(err || recipes[0]);
       }
@@ -32,7 +31,7 @@ export default async function recipes(fastify, options, done) {
   };
 
   const deleteARecipe = (req, reply) => {
-    fastify.mysql.query(
+    fastify.pg.query(
       `DELETE FROM Recipes WHERE Id = ${req.params.id}`,
       (err, result) => {
         reply.code(200).send(err || 'Success');
@@ -41,9 +40,9 @@ export default async function recipes(fastify, options, done) {
   };
 
   const saveRecipe = (req, reply) => {
-    fastify.mysql.execute(
+    fastify.pg.query(
       `INSERT INTO Recipes (UserId, Name, Method, Description) 
-      VALUES ("${req.user.sub}", "${req.body.name}", "${req.body.method}", "${req.body.description}")`,
+      VALUES ('${req.user.sub}', '${req.body.name}', '${req.body.method}', '${req.body.description}')`,
       (err, result) => {
         reply.code(200).send(err || 'Success');
       }
@@ -51,7 +50,7 @@ export default async function recipes(fastify, options, done) {
   };
 
   const updateARecipe = (req, reply) => {
-    fastify.mysql.execute(
+    fastify.mysql.query(
       `UPDATE Recipes
         SET Name = "${req.body.name}",
         Method = "${req.body.method}", 

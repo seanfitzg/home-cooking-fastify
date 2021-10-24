@@ -1,5 +1,5 @@
 import Fastify from 'fastify';
-import mySql from 'fastify-mysql';
+import pgSql from 'fastify-postgres';
 import fastifyAuth from 'fastify-auth0-verify';
 import fastifyCors from 'fastify-cors';
 import recipes from './routes/recipes/recipes.js';
@@ -14,10 +14,10 @@ fastify.register(fastifyAuth, {
 });
 
 let connectionString = process.env.IS_DOCKER
-  ? 'mysql://dbuser@mysql:3306?password=Password1!&database=homecooking'
-  : 'mysql://dbuser@localhost:3306?password=Password1!&database=homecooking';
+  ? 'postgresql://dbuser:Password1!@pgsql:5432/homecooking'
+  : 'postgresql://dbuser:Password1!@127.0.0.1:5432/homecooking';
 
-fastify.register(mySql, {
+fastify.register(pgSql, {
   connectionString,
 });
 fastify.register(recipes);

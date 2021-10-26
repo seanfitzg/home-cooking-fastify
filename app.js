@@ -4,14 +4,20 @@ import fastifyAuth from 'fastify-auth0-verify';
 import fastifyCors from 'fastify-cors';
 import recipes from './routes/recipes/recipes.js';
 
+import fakeAuth from './utilities/fakeAuth.js';
+
 export default function build(opts = {}) {
   const app = Fastify(opts);
 
   app.register(fastifyCors);
-  app.register(fastifyAuth, {
-    domain: 'home-cooking.eu.auth0.com',
-    audience: 'https://home-cooking/api',
-  });
+  if (process.env.USE_AUTH) {
+    app.register(fastifyAuth, {
+      domain: 'home-cooking.eu.auth0.com',
+      audience: 'https://home-cooking/api',
+    });
+  } else {
+    app.register(fakeAuth);
+  }
 
   let connectionString = process.env.IS_DOCKER
     ? 'postgresql://dbuser:Password1!@pgsql:5432/homecooking'

@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "test": "tap --reporter=list --watch",
     "start": "node server",
     "dev": "nodemon server"
   },
@@ -22,6 +23,8 @@
     "pg": "^8.7.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.13"
+    "nodemon": "^2.0.13",
+    "pino-pretty": "^7.1.0",
+    "tap": "^15.0.10"
   }
 }

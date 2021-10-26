@@ -7,7 +7,7 @@ import build from '../app.js';
 const { v4: uuidv4 } = pkg;
 
 test('posts to the "/recipes" route', async (t) => {
-  const app = build();
+  const app = build({}, true);
 
   const response = await app.inject({
     method: 'POST',

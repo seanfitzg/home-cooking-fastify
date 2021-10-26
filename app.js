@@ -6,17 +6,17 @@ import recipes from './routes/recipes/recipes.js';
 
 import fakeAuth from './utilities/fakeAuth.js';
 
-export default function build(opts = {}) {
+export default function build(opts = {}, noAuth = false) {
   const app = Fastify(opts);
 
   app.register(fastifyCors);
-  if (process.env.USE_AUTH) {
+  if (noAuth) {
+    app.register(fakeAuth);
+  } else {
     app.register(fastifyAuth, {
       domain: 'home-cooking.eu.auth0.com',
       audience: 'https://home-cooking/api',
     });
-  } else {
-    app.register(fakeAuth);
   }
 
   let connectionString = process.env.IS_DOCKER

@@ -17,9 +17,7 @@ services:
   #     - '3306:3306'
 
   pgsql:
-    # platform: linux/x86_64 # require for m1.
     image: postgres:latest
-    # command: postgres -c config_file=/etc/postgresql.conf
     environment:
       POSTGRES_DB: homecooking
       POSTGRES_USER: dbuser
@@ -27,7 +25,6 @@ services:
     volumes:
       - ./sql_data:/var/lib/postgresql/data
       - ./sql_create:/docker-entrypoint-initdb.d/
-      # - ./sql_create:/etc
     restart: always
     ports:
       - '5432:5432'

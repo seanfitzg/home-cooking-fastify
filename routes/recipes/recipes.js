@@ -1,3 +1,5 @@
+import validate from '../../validation/validate.js';
+
 export default async function recipes(fastify, options, done) {
   const getRecipes = async (req, reply) => {
     const { rows } = await fastify.pg.query('SELECT * FROM Recipes');
@@ -45,33 +47,44 @@ export default async function recipes(fastify, options, done) {
   };
 
   const deleteARecipe = (req, reply) => {
-    fastify.pg.query(
-      `DELETE FROM Recipes WHERE Id = ${req.params.id}`,
+    fastify.pg.transact(
+      async (client) => {
+        await client.query(
+          `DELETE FROM Ingredients
+          WHERE RecipeId = $1`,
+          [req.params.id]
+        );
+        await client.query('DELETE FROM Recipes WHERE Id = $1', [
+          req.params.id,
+        ]);
+      },
       (err, result) => {
         reply.code(200).send(err || 'Success');
       }
     );
   };
 
+  const insertIngredients = (client, recipeId, ingredients) => {
+    ingredients.forEach(async (ingredient) => {
+      await client.query(
+        `INSERT INTO Ingredients (Id, Item, Amount, RecipeId)
+              VALUES ('${ingredient.id}', '${ingredient.item}', '${ingredient.amount}', '${recipeId}')`
+      );
+    });
+  };
+
   const saveRecipe = (req, reply) => {
     fastify.pg.transact(
       async (client) => {
-        const recipeId = await client.query(`
+        const insertResult = await client.query(`
           INSERT INTO Recipes (UserId, Name, Method, Description) 
           VALUES ('${req.user.sub}', '${req.body.name}', '${req.body.method}', '${req.body.description}') returning Id;`);
 
-        req.body.ingredients.forEach(async (ingredient) => {
-          await client.query(
-            `INSERT INTO Ingredients (Id, Item, Amount, RecipeId)
-            VALUES ('${ingredient.id}', '${ingredient.item}', '${ingredient.amount}', '${recipeId.rows[0].id}')`,
-            (err, result) => {
-              if (err) {
-                console.log(err);
-                reply.code(200).send(err);
-              }
-            }
-          );
-        });
+        insertIngredients(
+          client,
+          insertResult.rows[0].id,
+          req.body.ingredients
+        );
       },
       (err, result) => {
         reply.code(200).send(err || 'Success');
@@ -80,12 +93,24 @@ export default async function recipes(fastify, options, done) {
   };
 
   const updateARecipe = (req, reply) => {
-    fastify.pg.query(
-      `UPDATE Recipes
-        SET Name = '${req.body.name}',
-        Method = '${req.body.method}', 
-        Description = '${req.body.description}'
-        WHERE Id = ${req.body.id}`,
+    fastify.pg.transact(
+      async (client) => {
+        await client.query(
+          `UPDATE Recipes
+          SET Name = '${req.body.name}',
+          Method = '${req.body.method}', 
+          Description = '${req.body.description}'
+          WHERE Id = ${req.body.id}`
+        );
+
+        await client.query(
+          `DELETE FROM Ingredients
+            WHERE RecipeId = $1`,
+          [req.body.id]
+        );
+
+        insertIngredients(client, req.body.id, req.body.ingredients);
+      },
       (err, result) => {
         reply.code(200).send(err || 'Success');
       }
@@ -94,27 +119,27 @@ export default async function recipes(fastify, options, done) {
 
   fastify.get('/recipes', {
     handler: getRecipes,
-    preValidation: fastify.authenticate,
+    preValidation: validate(fastify),
   });
 
   fastify.get('/recipes/:id', {
     handler: getARecipe,
-    preValidation: fastify.authenticate,
+    preValidation: validate(fastify),
   });
 
   fastify.post('/recipes', {
     handler: saveRecipe,
-    preValidation: fastify.authenticate,
+    preValidation: validate(fastify),
   });
 
   fastify.put('/recipes', {
     handler: updateARecipe,
-    preValidation: fastify.authenticate,
+    preValidation: validate(fastify),
   });
 
   fastify.delete('/recipes/:id', {
     handler: deleteARecipe,
-    preValidation: fastify.authenticate,
+    preValidation: validate(fastify),
   });
 
   done();

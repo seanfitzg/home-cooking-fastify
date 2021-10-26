@@ -1,7 +1,10 @@
 'use strict';
 
+import pkg from 'uuid';
 import { test } from 'tap';
 import build from '../app.js';
+
+const { v4: uuidv4 } = pkg;
 
 test('posts to the "/recipes" route', async (t) => {
   const app = build();
@@ -13,13 +16,13 @@ test('posts to the "/recipes" route', async (t) => {
       name: 'Recipe Name',
       ingredients: [
         {
-          id: 'b67e3f55-eed6-4941-b4c0-156ea92926bc',
+          id: uuidv4(),
           item: 'Beans',
           amount: '12',
           isNew: true,
         },
         {
-          id: '54d9bf1f-3db7-409a-836b-474d72c3b795',
+          id: uuidv4(),
           item: 'Bananas',
           amount: '3',
           isNew: true,

@@ -3,7 +3,6 @@ import mySql from 'fastify-postgres';
 import fastifyAuth from 'fastify-auth0-verify';
 import fastifyCors from 'fastify-cors';
 import recipes from './routes/recipes/recipes.js';
-
 import fakeAuth from './utilities/fakeAuth.js';
 
 export default function build(opts = {}, noAuth = false) {

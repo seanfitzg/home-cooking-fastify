@@ -1,8 +1,8 @@
 import pkg from 'uuid';
 import tap, { test } from 'tap';
-import build from '../app.js';
-import { deleteRecipesByUser } from '../utilities/sqlQueries.js';
-import { fakeUserId } from '../utilities/fakeAuth.js';
+import build from '../lib/app.js';
+import { deleteRecipesByUser } from './utilities/sqlQueries.js';
+import { fakeUserId } from './utilities/fakeAuth.js';
 
 const { v4: uuidv4 } = pkg;
 

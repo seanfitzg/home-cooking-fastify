@@ -11,7 +11,7 @@ services:
   #     MYSQL_PASSWORD: Password1!
   #   volumes:
   #     - ./mysql-data:/var/lib/mysql/
-  #     - ./mysql_create:/docker-entrypoint-initdb.d/
+  #     - ./lib/mysql_create:/docker-entrypoint-initdb.d/
   #   restart: always
   #   ports:
   #     - '3306:3306'
@@ -24,7 +24,7 @@ services:
       POSTGRES_PASSWORD: Password1!
     volumes:
       - ./sql_data:/var/lib/postgresql/data
-      - ./sql_create:/docker-entrypoint-initdb.d/
+      - ./lib/sql_create:/docker-entrypoint-initdb.d/
     restart: always
     ports:
       - '5432:5432'

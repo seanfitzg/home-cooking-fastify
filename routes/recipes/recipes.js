@@ -98,12 +98,13 @@ export default async function recipes(fastify, options, done) {
   };
 
   const saveRecipe = (req, reply) => {
+    let recipeId = 0;
     fastify.pg.transact(
       async (client) => {
         const insertResult = await client.query(`
           INSERT INTO Recipes (UserId, Name, Method, Description) 
           VALUES ('${req.user.sub}', '${req.body.name}', '${req.body.method}', '${req.body.description}') returning Id;`);
-
+        recipeId = insertResult.rows[0].id;
         insertIngredients(
           client,
           insertResult.rows[0].id,
@@ -111,7 +112,7 @@ export default async function recipes(fastify, options, done) {
         );
       },
       (err, result) => {
-        reply.code(200).send(err || 'Success');
+        reply.code(200).send(err || { message: 'Success', recipeId: recipeId });
       }
     );
   };
@@ -136,7 +137,7 @@ export default async function recipes(fastify, options, done) {
         insertIngredients(client, req.body.id, req.body.ingredients);
       },
       (err, result) => {
-        reply.code(200).send(err || 'Success');
+        reply.code(200).send(err || { message: 'Success' });
       }
     );
   };

@@ -11,6 +11,6 @@ CREATE TABLE Recipes (
 CREATE TABLE Ingredients (
     Id UUID PRIMARY KEY NOT NULL,
     Item varchar NULL,
-    Amount DOUBLE PRECISION NOT NULL,
+    Amount varchar NULL,
     RecipeId int NOT NULL references Recipes(Id)
 );

@@ -1,17 +1,13 @@
-'use strict';
-
 import pkg from 'uuid';
 import tap, { test } from 'tap';
 import build from '../app.js';
+import { deleteRecipesByUser } from '../utilities/sqlQueries.js';
+import { fakeUserId } from '../utilities/fakeAuth.js';
 
 const { v4: uuidv4 } = pkg;
 
 tap.before(async (t) => {
-  const app = build({}, true);
-  await app.inject({
-    method: 'DELETE',
-    url: `/deleteallfortestuser`,
-  });
+  await deleteRecipesByUser(fakeUserId);
 });
 
 test('posts to the "/recipes" route', async (t) => {

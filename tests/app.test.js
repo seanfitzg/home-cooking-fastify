@@ -1,14 +1,21 @@
 'use strict';
 
 import pkg from 'uuid';
-import { test } from 'tap';
+import tap, { test } from 'tap';
 import build from '../app.js';
 
 const { v4: uuidv4 } = pkg;
 
+tap.before(async (t) => {
+  const app = build({}, true);
+  await app.inject({
+    method: 'DELETE',
+    url: `/deleteallfortestuser`,
+  });
+});
+
 test('posts to the "/recipes" route', async (t) => {
   const app = build({}, true);
-
   const response = await app.inject({
     method: 'POST',
     url: '/recipes',
@@ -36,11 +43,10 @@ test('posts to the "/recipes" route', async (t) => {
 });
 
 test('requests the "/recipes" route', async (t) => {
-  const app = build();
+  const app = build({}, true);
   const response = await app.inject({
     method: 'GET',
     url: '/recipes',
   });
-  console.log(response.body);
   t.equal(response.statusCode, 200, 'returns a status code of 200');
 });

@@ -1,8 +1,12 @@
 import validate from '../../validation/validate.js';
+import { fakeUserId } from '../../utilities/fakeAuth.js';
 
 export default async function recipes(fastify, options, done) {
   const getRecipes = async (req, reply) => {
-    const { rows } = await fastify.pg.query('SELECT * FROM Recipes');
+    const { rows } = await fastify.pg.query(
+      'SELECT * FROM Recipes WHERE UserId = $1',
+      [req.user.sub]
+    );
     if (rows) {
       let recipes = rows.map((value) => {
         return {
@@ -44,6 +48,26 @@ export default async function recipes(fastify, options, done) {
       };
       reply.send(recipe);
     }
+  };
+
+  const deleteAllRecipesForTestUser = (req, reply) => {
+    fastify.pg.transact(
+      async (client) => {
+        const { rows } = await client.query(
+          'SELECT * FROM Recipes WHERE UserId = $1',
+          [fakeUserId]
+        );
+        rows.forEach(async (recipe) => {
+          await client.query('DELETE FROM Ingredients WHERE RecipeId = $1', [
+            recipe.id,
+          ]);
+          await client.query('DELETE FROM Recipes WHERE Id = $1', [recipe.id]);
+        });
+      },
+      (err, result) => {
+        reply.code(200).send(err || 'Success');
+      }
+    );
   };
 
   const deleteARecipe = (req, reply) => {
@@ -139,6 +163,11 @@ export default async function recipes(fastify, options, done) {
 
   fastify.delete('/recipes/:id', {
     handler: deleteARecipe,
+    preValidation: validate(fastify),
+  });
+
+  fastify.delete(`/deleteallfortestuser`, {
+    handler: deleteAllRecipesForTestUser,
     preValidation: validate(fastify),
   });
 

@@ -1,5 +1,5 @@
 import Fastify from 'fastify';
-import mySql from 'fastify-postgres';
+import pgSql from 'fastify-postgres';
 import fastifyAuth from 'fastify-auth0-verify';
 import fastifyCors from 'fastify-cors';
 import recipes from './routes/recipes/recipes.js';
@@ -21,7 +21,7 @@ export default function build(opts = {}, noAuth = false) {
   let connectionString = process.env.IS_DOCKER
     ? 'postgresql://dbuser:Password1!@pgsql:5432/homecooking'
     : 'postgresql://dbuser:Password1!@127.0.0.1:5432/homecooking';
-  app.register(mySql, {
+  app.register(pgSql, {
     connectionString,
   });
 

@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "tap --reporter=list --watch --files=./tests/**/*test*.js",
-    "start": "node server",
-    "dev": "nodemon server"
+    "start": "node lib/server.js",
+    "dev": "nodemon lib/server.js"
   },
   "type": "module",
   "author": "",

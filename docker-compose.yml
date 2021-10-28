@@ -1,21 +1,6 @@
 version: '3.4'
 
 services:
-  # mysql:
-  #   platform: linux/x86_64 # require for m1.
-  #   image: mysql:latest
-  #   environment:
-  #     MYSQL_RANDOM_ROOT_PASSWORD: 1
-  #     MYSQL_DATABASE: homecooking
-  #     MYSQL_USER: dbuser
-  #     MYSQL_PASSWORD: Password1!
-  #   volumes:
-  #     - ./mysql-data:/var/lib/mysql/
-  #     - ./lib/mysql_create:/docker-entrypoint-initdb.d/
-  #   restart: always
-  #   ports:
-  #     - '3306:3306'
-
   pgsql:
     image: postgres:latest
     environment:
@@ -36,9 +21,22 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - '5000:5000'
+    # ports:
+    #   - '5000:5000'
     environment:
       IS_DOCKER: 1
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    #   - ./nginx/nginx.conf:/tmp/default.conf
+    depends_on:
+      - home-cooking-fastify
+    ports:
+      - '5001:80'
+    # environment:
+    #   - NGINX_PORT=8080
+    # command: /bin/bash -c "envsubst '$$NGINX_PORT' < /tmp/default.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
   # docker run --name home-cooking-fastify -it -p 5000:5000 home-cooking-fastify:dev /bin/bash

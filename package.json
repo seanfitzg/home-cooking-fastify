@@ -7,7 +7,9 @@
     "test": "tap --reporter=list --watch --files=./tests/**/*test*.js",
     "start": "node lib/server.js",
     "dev": "nodemon lib/server.js",
-    "hlogs": "heroku logs --app home-cooking-fastify  --tail"
+    "hlogs": "heroku logs --app home-cooking-fastify  --tail",
+    "hpush": "git push heroku main",
+    "hping": "curl https://home-cooking-fastify.herokuapp.com/ping"
   },
   "type": "module",
   "author": "",

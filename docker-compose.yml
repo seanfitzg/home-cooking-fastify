@@ -25,6 +25,7 @@ services:
     #   - '5000:5000'
     environment:
       IS_DOCKER: 1
+      DB_CONNECTION_STRING: postgresql://dbuser:Password1!@pgsql:5432/homecooking
 
   nginx:
     image: nginx
